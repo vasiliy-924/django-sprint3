@@ -6,32 +6,49 @@ admin.site.site_title = 'Администрирование блога'
 admin.site.index_title = 'Добро пожаловать в админ-панель Блога'
 admin.site.empty_value_display = 'Не задано'
 
+
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'is_published', 'created_at')
-    prepopulated_fields = {'slug':('title',)}
-    search_fields = ('title', 'description')
-    list_filter = ('is_published', 'created_at')
-    ordering = ('-created_at',)
+    list_display = (
+        'title',
+        'description',
+        'is_published',
+    )
+    list_editable = (
+        'is_published',
+    )
+    search_fields = ('title',)
     empty_value_display = 'Не задано'
 
+
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_published', 'created_at')
+    list_display = (
+        'name',
+        'is_published',
+    )
+    list_editable = (
+        'is_published',
+    )
     search_fields = ('name',)
-    list_filter = ('is_published', 'created_at')
-    ordering = ('name',)
     empty_value_display = 'Не задано'
+
 
 class PostAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'author', 'pub_date', 'category', 
-        'location', 'is_published', 'created_at'
+        'title',
+        'pub_date',
+        'author',
+        'location',
+        'category',
+        'is_published',
     )
-    search_fields = ('title', 'text')
-    list_filter = ('is_published', 'pub_date', 'category', 'location')
+    list_editable = (
+        'is_published',
+    )
+    search_fields = ('title',)
+    list_filter = ('category', 'location', 'author')
     date_hierarchy = 'pub_date'
-    ordering = ('-pub_date',)
-    raw_id_fields = ('author',)
     empty_value_display = 'Не задано'
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Location, LocationAdmin)

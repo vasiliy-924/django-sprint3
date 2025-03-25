@@ -12,14 +12,23 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='category',
-            options={'ordering': ['-created_at'], 'verbose_name': 'категория', 'verbose_name_plural': 'Категории'},
+            options={
+                'ordering': ['-created_at'],
+                'verbose_name': 'категория',
+                'verbose_name_plural': 'Категории'},
         ),
         migrations.AlterModelOptions(
             name='location',
-            options={'ordering': ['name'], 'verbose_name': 'местоположение', 'verbose_name_plural': 'Местоположения'},
+            options={
+                'ordering': ['name'],
+                'verbose_name': 'местоположение',
+                'verbose_name_plural': 'Местоположения'},
         ),
         migrations.AlterModelOptions(
             name='post',
-            options={'ordering': ['-pub_date'], 'verbose_name': 'публикация', 'verbose_name_plural': 'Публикации'},
+            options={
+                'ordering': ['-pub_date'],
+                'verbose_name': 'публикация',
+                'verbose_name_plural': 'Публикации'},
         ),
     ]
