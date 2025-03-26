@@ -1,30 +1,22 @@
-from django.shortcuts import render, get_object_or_404
-from django.utils import timezone
-from .models import Post, Category
+from django.shortcuts import get_object_or_404, render
+from django.utils.timezone import now
+
+from .constants import POSTS_LIMIT
+from .models import Category
+from .querysets import get_published_posts
 
 
 def index(request):
-    post_list = Post.objects.select_related(
-        'category', 'location', 'author'
-    ).filter(
-        is_published=True,
-        category__is_published=True,
-        pub_date__lte=timezone.now()
-    ).order_by('-pub_date')[:5]
-    context = {'post_list': post_list}
-    return render(request, 'blog/index.html', context)
+    post_list = get_published_posts()[:POSTS_LIMIT]
+    return render(request, 'blog/index.html', {'post_list': post_list})
 
 
 def post_detail(request, post_id):
     post = get_object_or_404(
-        Post.objects.select_related('category', 'location', 'author'),
-        pk=post_id,
-        is_published=True,
-        category__is_published=True,
-        pub_date__lte=timezone.now()
+        get_published_posts(),
+        pk=post_id
     )
-    context = {'post': post}
-    return render(request, 'blog/detail.html', context)
+    return render(request, 'blog/detail.html', {'post': post})
 
 
 def category_posts(request, category_slug):
@@ -33,12 +25,11 @@ def category_posts(request, category_slug):
         slug=category_slug,
         is_published=True
     )
-    post_list = Post.objects.select_related(
-        'category', 'location', 'author'
-    ).filter(
-        category=category,
+    post_list = category.posts.filter(
         is_published=True,
-        pub_date__lte=timezone.now()
-    ).order_by('-pub_date')
-    context = {'category': category, 'post_list': post_list}
-    return render(request, 'blog/category.html', context)
+        pub_date__lte=now()
+    ).select_related('category', 'location', 'author')
+    return render(request, 'blog/category.html', {
+        'category': category,
+        'post_list': post_list
+    })

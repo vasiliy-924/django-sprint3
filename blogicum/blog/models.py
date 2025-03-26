@@ -1,12 +1,38 @@
 from django.db import models
-
 from django.contrib.auth import get_user_model
+
+from .constants import (
+    DEFAULT_STR_LENGTH,
+    PUBLISHED_HELP_TEXT,
+    POST_TITLE_MAX_LENGTH,
+    CATEGORY_TITLE_MAX_LENGTH,
+    CATEGORY_SLUG_MAX_LENGTH,
+    LOCATION_NAME_MAX_LENGTH
+)
 
 User = get_user_model()
 
 
-class Post(models.Model):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+class PublishedCreatedModel(models.Model):
+    is_published = models.BooleanField(
+        default=True,
+        verbose_name='Опубликовано',
+        help_text=PUBLISHED_HELP_TEXT
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Добавлено'
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Post(PublishedCreatedModel):
+    title = models.CharField(
+        max_length=POST_TITLE_MAX_LENGTH,
+        verbose_name='Заголовок'
+    )
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -16,29 +42,24 @@ class Post(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор публикации'
+        verbose_name='Автор публикации',
+        related_name='posts'
     )
     location = models.ForeignKey(
         'Location',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name='Местоположение'
+        verbose_name='Местоположение',
+        related_name='posts'
     )
     category = models.ForeignKey(
         'Category',
         on_delete=models.SET_NULL,
         null=True,
-        blank=False,
-        verbose_name='Категория'
+        verbose_name='Категория',
+        related_name='posts'
     )
-    is_published = models.BooleanField(
-        default=True,
-        verbose_name='Опубликовано',
-        help_text='Снимите галочку, чтобы скрыть публикацию.'
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name='Добавлено')
 
     class Meta:
         verbose_name = 'публикация'
@@ -46,47 +67,40 @@ class Post(models.Model):
         ordering = ('-pub_date',)
 
     def __str__(self):
-        return self.title
+        return self.title[:DEFAULT_STR_LENGTH]
 
 
-class Category(models.Model):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+class Category(PublishedCreatedModel):
+    title = models.CharField(
+        max_length=CATEGORY_TITLE_MAX_LENGTH,
+        verbose_name='Заголовок'
+    )
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
         unique=True,
+        max_length=CATEGORY_SLUG_MAX_LENGTH,
         verbose_name='Идентификатор',
         help_text='Идентификатор страницы для URL; '
         'разрешены символы латиницы, цифры, дефис и подчёркивание.'
     )
-    is_published = models.BooleanField(
-        default=True,
-        verbose_name='Опубликовано',
-        help_text='Снимите галочку, чтобы скрыть публикацию.'
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name='Добавлено')
 
     class Meta:
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return self.title
+        return self.title[:DEFAULT_STR_LENGTH]
 
 
-class Location(models.Model):
-    name = models.CharField(max_length=256, verbose_name='Название места')
-    is_published = models.BooleanField(
-        default=True,
-        verbose_name='Опубликовано',
-        help_text='Снимите галочку, чтобы скрыть публикацию.'
+class Location(PublishedCreatedModel):
+    name = models.CharField(
+        max_length=LOCATION_NAME_MAX_LENGTH,
+        verbose_name='Название места'
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name='Добавлено')
 
     class Meta:
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
 
     def __str__(self):
-        return self.title
+        return self.name[:DEFAULT_STR_LENGTH]
