@@ -1,39 +1,30 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
 from .constants import (
     DEFAULT_STR_LENGTH,
     PUBLISHED_HELP_TEXT,
-    POST_TITLE_MAX_LENGTH,
-    CATEGORY_TITLE_MAX_LENGTH,
-    CATEGORY_SLUG_MAX_LENGTH,
-    LOCATION_NAME_MAX_LENGTH
+    TITLE_MAX_LENGTH,
+    SLUG_MAX_LENGTH
 )
 
 User = get_user_model()
 
 
-class PublishedCreatedModel(models.Model):
+class PublishedCreatedAbstract(models.Model):
     is_published = models.BooleanField(
+        'Опубликовано',
         default=True,
-        verbose_name='Опубликовано',
         help_text=PUBLISHED_HELP_TEXT
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Добавлено'
-    )
+    created_at = models.DateTimeField('Добавлено', auto_now_add=True)
 
     class Meta:
         abstract = True
 
 
-class Post(PublishedCreatedModel):
-    title = models.CharField(
-        max_length=POST_TITLE_MAX_LENGTH,
-        verbose_name='Заголовок'
-    )
-    text = models.TextField(verbose_name='Текст')
+class Post(PublishedCreatedAbstract):
+    title = models.CharField('Заголовок', max_length=TITLE_MAX_LENGTH)
+    text = models.TextField('Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
         help_text=('Если установить дату и время в будущем — '
@@ -70,16 +61,13 @@ class Post(PublishedCreatedModel):
         return self.title[:DEFAULT_STR_LENGTH]
 
 
-class Category(PublishedCreatedModel):
-    title = models.CharField(
-        max_length=CATEGORY_TITLE_MAX_LENGTH,
-        verbose_name='Заголовок'
-    )
-    description = models.TextField(verbose_name='Описание')
+class Category(PublishedCreatedAbstract):
+    title = models.CharField('Заголовок', max_length=TITLE_MAX_LENGTH)
+    description = models.TextField('Описание')
     slug = models.SlugField(
-        unique=True,
-        max_length=CATEGORY_SLUG_MAX_LENGTH,
         verbose_name='Идентификатор',
+        max_length=SLUG_MAX_LENGTH,
+        unique=True,
         help_text='Идентификатор страницы для URL; '
         'разрешены символы латиницы, цифры, дефис и подчёркивание.'
     )
@@ -92,11 +80,8 @@ class Category(PublishedCreatedModel):
         return self.title[:DEFAULT_STR_LENGTH]
 
 
-class Location(PublishedCreatedModel):
-    name = models.CharField(
-        max_length=LOCATION_NAME_MAX_LENGTH,
-        verbose_name='Название места'
-    )
+class Location(PublishedCreatedAbstract):
+    name = models.CharField('Название места', max_length=TITLE_MAX_LENGTH)
 
     class Meta:
         verbose_name = 'местоположение'

@@ -1,11 +1,9 @@
 from django.utils.timezone import now
 
-from .models import Post
 
-
-def get_published_posts():
-    """Возвращает QuerySet опубликованных постов с оптимизацией запросов."""
-    return Post.objects.filter(
+def filter_published(queryset):
+    """Фильтрует QuerySet по критериям публикации."""
+    return queryset.filter(
         is_published=True,
         category__is_published=True,
         pub_date__lte=now()
