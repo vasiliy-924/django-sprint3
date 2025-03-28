@@ -1,7 +1,7 @@
 from django.utils.timezone import now
 
 
-def published_posts_filter(queryset):
+def filter_posts_publication(queryset):
     return queryset.filter(
         is_published=True,
         category__is_published=True,

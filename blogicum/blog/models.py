@@ -3,8 +3,8 @@ from django.contrib.auth import get_user_model
 from .constants import (
     DEFAULT_STR_LENGTH,
     PUBLISHED_HELP_TEXT,
-    CHAR_MAX_LENGTH,
-    SLUG_MAX_LENGTH
+    CharField_MAX_LENGTH,
+    SlugField_MAX_LENGTH
 )
 
 User = get_user_model()
@@ -26,7 +26,7 @@ class PublishedCreatedAbstract(models.Model):
 
 
 class Post(PublishedCreatedAbstract):
-    title = models.CharField('Заголовок', max_length=CHAR_MAX_LENGTH)
+    title = models.CharField('Заголовок', max_length=CharField_MAX_LENGTH)
     text = models.TextField('Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -65,11 +65,11 @@ class Post(PublishedCreatedAbstract):
 
 
 class Category(PublishedCreatedAbstract):
-    title = models.CharField('Заголовок', max_length=CHAR_MAX_LENGTH)
+    title = models.CharField('Заголовок', max_length=CharField_MAX_LENGTH)
     description = models.TextField('Описание')
     slug = models.SlugField(
         verbose_name='Идентификатор',
-        max_length=SLUG_MAX_LENGTH,
+        max_length=SlugField_MAX_LENGTH,
         unique=True,
         help_text='Идентификатор страницы для URL; '
         'разрешены символы латиницы, цифры, дефис и подчёркивание.'
@@ -84,7 +84,7 @@ class Category(PublishedCreatedAbstract):
 
 
 class Location(PublishedCreatedAbstract):
-    name = models.CharField('Название места', max_length=CHAR_MAX_LENGTH)
+    name = models.CharField('Название места', max_length=CharField_MAX_LENGTH)
 
     class Meta:
         verbose_name = 'местоположение'
