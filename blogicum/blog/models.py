@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from .constants import (
     DEFAULT_STR_LENGTH,
     PUBLISHED_HELP_TEXT,
-    TITLE_MAX_LENGTH,
+    CHAR_MAX_LENGTH,
     SLUG_MAX_LENGTH
 )
 
@@ -11,19 +11,22 @@ User = get_user_model()
 
 
 class PublishedCreatedAbstract(models.Model):
-    is_published = models.BooleanField(
+    is_published = models.BooleanField(  # Поле сохранено с is_
         'Опубликовано',
         default=True,
         help_text=PUBLISHED_HELP_TEXT
     )
-    created_at = models.DateTimeField('Добавлено', auto_now_add=True)
+    created_at = models.DateTimeField(  # Поле сохранено с at_
+        'Добавлено',
+        auto_now_add=True
+    )
 
     class Meta:
         abstract = True
 
 
 class Post(PublishedCreatedAbstract):
-    title = models.CharField('Заголовок', max_length=TITLE_MAX_LENGTH)
+    title = models.CharField('Заголовок', max_length=CHAR_MAX_LENGTH)
     text = models.TextField('Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -62,7 +65,7 @@ class Post(PublishedCreatedAbstract):
 
 
 class Category(PublishedCreatedAbstract):
-    title = models.CharField('Заголовок', max_length=TITLE_MAX_LENGTH)
+    title = models.CharField('Заголовок', max_length=CHAR_MAX_LENGTH)
     description = models.TextField('Описание')
     slug = models.SlugField(
         verbose_name='Идентификатор',
@@ -81,7 +84,7 @@ class Category(PublishedCreatedAbstract):
 
 
 class Location(PublishedCreatedAbstract):
-    name = models.CharField('Название места', max_length=TITLE_MAX_LENGTH)
+    name = models.CharField('Название места', max_length=CHAR_MAX_LENGTH)
 
     class Meta:
         verbose_name = 'местоположение'
